@@ -1,0 +1,37 @@
+- name: Asegurar directorio .config existe
+  file:
+    path: "{{ keypair_private_path | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Generar par de claves SSH si no existen
+  openssh_keypair:
+    path: "{{ keypair_private_path | regex_replace('\\.pem$', '') }}"
+    type: rsa
+    size: 2048
+    mode: '0600'
+  register: ssh_key
+  changed_when: ssh_key.changed
+
+- name: Leer clave pública recién generada
+  slurp:
+    src: "{{ keypair_public_path }}"
+  register: pub_key_raw
+
+- name: Decodificar clave pública
+  set_fact:
+    keypair_public_key: "{{ pub_key_raw.content | b64decode }}"
+
+- name: Comprobar si ya existe la clave en OpenStack
+  command: openstack keypair show "{{ keypair_name }}"
+  register: keypair_check
+  failed_when: false
+  changed_when: false
+
+- name: Registrar clave pública en OpenStack si no existe
+  openstack.cloud.keypair:
+    name: "{{ keypair_name }}"
+    public_key: "{{ keypair_public_key }}"
+    state: present
+    auth: "{{ openstack_auth }}"
+  when: keypair_check.rc != 0

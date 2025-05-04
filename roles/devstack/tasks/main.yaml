@@ -15,7 +15,16 @@
     state: present
     update_cache: yes
 
+- name: Verificar si DevStack está operativo
+  shell: |
+    source /opt/stack/devstack/openrc admin admin
+    openstack token issue -f value -c id
+  register: devstack_status
+  failed_when: false
+  changed_when: false
+
 - name: Clonar DevStack si no existe
+  when: devstack_status.rc == 0
   git:
     repo: https://opendev.org/openstack/devstack.git
     dest: /home/vagrant/devstack
@@ -25,6 +34,7 @@
   become_user: vagrant
 
 - name: Asegurar que se elimina cualquier local.conf previo
+  when: devstack_status.rc == 0
   file:
     path: /home/vagrant/devstack/local.conf
     state: absent
@@ -53,4 +63,9 @@
   become_user: vagrant
   environment:
     HOME: /home/vagrant
-  when: not lookup('file', '/home/vagrant/devstack/.stack_success', errors='ignore')
+  when: devstack_status.rc == 0
+- name: Asegurar que openstacksdk está instalado
+  become: true
+  ansible.builtin.pip:
+    name: openstacksdk
+    executable: pip3

@@ -1,0 +1,11 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: {{ kind_cluster_name }}
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 6443
+        hostPort: 6443
+        listenAddress: "0.0.0.0"
+  - role: worker
+  - role: worker

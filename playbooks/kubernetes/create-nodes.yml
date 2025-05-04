@@ -1,0 +1,50 @@
+- name: Crear VMs para Kubernetes en DevStack
+  hosts: kubeadm
+  become: true
+  vars:
+    auth:
+      auth_url: "http://127.0.0.1/identity"
+      username: "admin"
+      password: "secret"
+      project_name: "admin"
+      user_domain_name: "Default"
+      project_domain_name: "Default"
+    image_name: "ubuntu-22.04"
+    flavor_name: "m1.small"
+    network_name: "private"
+    keypair_name: "vagrantkey"
+
+  roles:
+    - openstack-keypair-register
+    - openstack-image-register
+
+  tasks:
+    - name: Crear nodo de control
+      openstack.cloud.server:
+        name: k8s-control-plane
+        image: "{{ image_name }}"
+        flavor: "{{ flavor_name }}"
+        network: "{{ network_name }}"
+        key_name: "{{ keypair_name }}"
+        auto_ip: true
+        auth: "{{ auth }}"
+
+    - name: Crear worker 1
+      openstack.cloud.server:
+        name: k8s-worker-1
+        image: "{{ image_name }}"
+        flavor: "{{ flavor_name }}"
+        network: "{{ network_name }}"
+        key_name: "{{ keypair_name }}"
+        auto_ip: true
+        auth: "{{ auth }}"
+
+    - name: Crear worker 2
+      openstack.cloud.server:
+        name: k8s-worker-2
+        image: "{{ image_name }}"
+        flavor: "{{ flavor_name }}"
+        network: "{{ network_name }}"
+        key_name: "{{ keypair_name }}"
+        auto_ip: true
+        auth: "{{ auth }}"

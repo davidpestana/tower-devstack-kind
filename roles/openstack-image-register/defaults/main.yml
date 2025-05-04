@@ -1,0 +1,3 @@
+ubuntu_image_name: "ubuntu-22.04"
+ubuntu_image_url: "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
+ubuntu_image_local: "/tmp/ubuntu-22.04.qcow2"

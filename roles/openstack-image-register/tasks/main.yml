@@ -1,0 +1,28 @@
+- name: Comprobar si la imagen ya existe
+  command: openstack image show "{{ ubuntu_image_name }}"
+  register: image_check
+  ignore_errors: true
+
+- name: Descargar imagen si no existe localmente
+  get_url:
+    url: "{{ ubuntu_image_url }}"
+    dest: "{{ ubuntu_image_local }}"
+    mode: '0644'
+  when: image_check.rc != 0
+
+- name: Subir imagen a Glance si no está registrada
+  openstack.cloud.image:
+    name: "{{ ubuntu_image_name }}"
+    filename: "{{ ubuntu_image_local }}"
+    disk_format: qcow2
+    container_format: bare
+    visibility: public
+    state: present
+    auth:
+      auth_url: "http://127.0.0.1/identity"
+      username: "admin"
+      password: "secret"
+      project_name: "admin"
+      user_domain_name: "Default"
+      project_domain_name: "Default"
+  when: image_check.rc != 0

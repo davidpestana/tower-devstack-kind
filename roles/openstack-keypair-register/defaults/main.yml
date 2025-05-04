@@ -1,0 +1,11 @@
+keypair_name: "k8skey"
+keypair_private_path: "/home/vagrant/labs/.config/k8skey.pem"
+keypair_public_path: "/home/vagrant/labs/.config/k8skey.pub"
+
+openstack_auth:
+  auth_url: "http://127.0.0.1/identity"
+  username: "admin"
+  password: "secret"
+  project_name: "admin"
+  user_domain_name: "Default"
+  project_domain_name: "Default"

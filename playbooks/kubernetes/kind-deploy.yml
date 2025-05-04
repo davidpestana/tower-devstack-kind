@@ -1,0 +1,8 @@
+- name: Desplegar clúster KIND de 3 nodos expuesto públicamente
+  hosts: k8s
+  become: true
+  vars:
+    kind_cluster_name: kind-public
+    host_ip: "{{ ansible_host }}"
+  roles:
+    - kind
