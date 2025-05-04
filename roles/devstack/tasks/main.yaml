@@ -1,0 +1,56 @@
+# ~/labs/roles/devstack/tasks/main.yml
+
+- name: Detectar IP de red privada
+  set_fact:
+    devstack_host_ip: "{{ ansible_all_ipv4_addresses | select('match', '^192\\.168\\.56\\.') | list | first }}"
+
+- name: Instalar dependencias del sistema
+  become: true
+  apt:
+    name:
+      - git
+      - python3-pip
+      - net-tools
+      - sudo
+    state: present
+    update_cache: yes
+
+- name: Clonar DevStack si no existe
+  git:
+    repo: https://opendev.org/openstack/devstack.git
+    dest: /home/vagrant/devstack
+    version: master
+    update: no
+  become: true
+  become_user: vagrant
+
+- name: Asegurar que se elimina cualquier local.conf previo
+  file:
+    path: /home/vagrant/devstack/local.conf
+    state: absent
+  become: true
+
+- name: Generar archivo local.conf desde plantilla
+  template:
+    src: local.conf.j2
+    dest: /home/vagrant/devstack/local.conf
+    mode: '0644'
+    force: true
+  become: true
+  become_user: vagrant
+
+- name: Eliminar /opt/stack/requirements si existe (por si DevStack lo creó en ejecuciones previas)
+  file:
+    path: /opt/stack/requirements
+    state: absent
+  become: true
+
+- name: Ejecutar DevStack si no está desplegado
+  shell: ./stack.sh > /home/vagrant/stack.log 2>&1
+  args:
+    chdir: /home/vagrant/devstack
+  become: true
+  become_user: vagrant
+  environment:
+    HOME: /home/vagrant
+  when: not lookup('file', '/home/vagrant/devstack/.stack_success', errors='ignore')

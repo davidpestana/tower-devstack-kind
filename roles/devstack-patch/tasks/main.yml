@@ -1,0 +1,7 @@
+- name: Parchear write_user_unit_file en local.sh
+  copy:
+    src: local.sh
+    dest: /home/vagrant/devstack/local.sh
+    owner: vagrant
+    group: vagrant
+    mode: '0755'

@@ -1,0 +1,55 @@
+[[local|localrc]]
+# Contraseñas base
+ADMIN_PASSWORD=secret
+DATABASE_PASSWORD=password
+RABBIT_PASSWORD=password
+SERVICE_PASSWORD=password
+
+# IP del host donde se ejecuta DevStack
+HOST_IP={{ devstack_host_ip }}
+
+# Repositorio de requirements personalizado
+REQUIREMENTS_REPO=https://github.com/davidpestana/requirements.git
+
+# --- INICIO: Capa de integración con Kuryr-Kubernetes (desactivada por simplificación) ---
+# enable_plugin kuryr-kubernetes https://opendev.org/openstack/kuryr-kubernetes
+
+# Servicios necesarios para Kuryr y Kubernetes
+# enable_service docker
+# enable_service etcd
+# enable_service kuryr-kubernetes
+# enable_service kuryr-daemon
+# enable_service kuryr-cni
+
+# Opciones de Kuryr
+# KURYR_K8S_USE_PORT_POOLS=True
+# KURYR_NEUTRON_DEFAULT_PROJECT=demo
+# KURYR_K8S_CONTAINERIZED_DEPLOYMENT=True
+# KURYR_CNI_DAEMON=True
+# KURYR_ENFORCE_SG_RULES=True
+# KURYR_SUBNET_DRIVER=subnetpool
+# KURYR_SG_DRIVER=default
+# --- FIN: Capa de integración con Kuryr-Kubernetes ---
+  
+# Configuración básica de Neutron
+Q_PLUGIN=ml2
+Q_ML2_PLUGIN_MECHANISM_DRIVERS=openvswitch
+Q_AGENT=openvswitch
+Q_USE_SECGROUP=True
+Q_L3_ENABLED=True
+ENABLE_TENANT_TUNNELS=True
+
+# --- INICIO: Capa de red pública / provider network (desactivada por simplificación) ---
+# Q_USE_PROVIDERNET_FOR_PUBLIC=True
+# PUBLIC_NETWORK_NAME=public
+# PHYSICAL_NETWORK=public
+# OVS_PHYSICAL_BRIDGE=br-ex
+# PUBLIC_BRIDGE=br-ex
+# FLOATING_RANGE="172.24.4.0/24"
+# PUBLIC_NETWORK_GATEWAY="172.24.4.1"
+# FIXED_RANGE="10.0.0.0/22"
+# --- FIN: Capa de red pública ---
+
+# Ajustes opcionales
+DISABLE_AMPQ_WARNINGS=True
+disable_service dstat

@@ -1,0 +1,7 @@
+# ~/labs/playbooks/devstack/deploy.yml
+- name: Desplegar DevStack
+  hosts: openstack
+  become: yes
+  roles:
+    # - devstack-patch
+    - devstack
