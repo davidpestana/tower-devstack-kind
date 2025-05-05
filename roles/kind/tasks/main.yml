@@ -78,8 +78,17 @@
     line: '\1https://{{ host_ip }}:6443'
     backrefs: yes
 
-- name: Copiar kubeconfig al host en labs/.config/kind.kubeconfig
+- name: Copiar kubeconfig original al host
   fetch:
     src: /home/vagrant/.kube/config
     dest: "{{ playbook_dir }}/../../.config/kind.kubeconfig"
     flat: true
+
+- name: Parchear IP del servidor en kubeconfig copiado
+  delegate_to: localhost
+  run_once: true
+  lineinfile:
+    path: "{{ playbook_dir }}/../../.config/kind.kubeconfig"
+    regexp: '^(\s*server:\s*)https://.*:\d+'
+    line: '\1https://{{ host_ip }}:6443'
+    backrefs: yes
