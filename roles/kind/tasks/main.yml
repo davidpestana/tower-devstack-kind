@@ -1,3 +1,9 @@
+
+- name: Detectar IP de red privada
+  set_fact:
+    k8s_host_ip: "{{ ansible_all_ipv4_addresses | select('match', '^192\\.168\\.56\\.') | list | first }}"
+
+
 - name: Instalar dependencias del sistema
   apt:
     name:

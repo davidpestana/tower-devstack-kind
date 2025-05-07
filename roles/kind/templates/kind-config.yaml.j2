@@ -9,3 +9,11 @@ nodes:
         listenAddress: "0.0.0.0"
   - role: worker
   - role: worker
+kubeadmConfigPatches:
+  - |
+    kind: ClusterConfiguration
+    apiServer:
+      certSANs:
+        - "localhost"
+        - "127.0.0.1"
+        - "{{ k8s_host_ip }}"
